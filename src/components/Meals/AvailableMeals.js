@@ -2,12 +2,14 @@ import Card from "../UI/Card";
 import classes from "./AvailableMeals.module.css";
 import MealItem from "./SingleMeal/MealItem";
 import { useEffect } from "react";
-import { useState} from "react";
+import { useState } from "react";
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchMeals = async () => {
       const response = await fetch(
         "https://react-http-request-c314b-default-rtdb.firebaseio.com/meals.json"
@@ -24,9 +26,17 @@ const AvailableMeals = () => {
         fetchedMeals.push(meal);
       }
       setMeals(fetchedMeals);
+      setIsLoading(false);
     };
     fetchMeals();
   }, []);
+  if(isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <p>Loading Meals...</p>
+      </section>
+    );
+  }
   const mealsList = meals.map((meal) => (
     <MealItem
       key={meal.id}
